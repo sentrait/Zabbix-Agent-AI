@@ -86,7 +86,7 @@ class AIService:
                     },
                     "required": ["host_id", "status"]
                 }
-            }
+            },
             {
                 "name": "get_host_details",
                 "description": "Get detailed status of a specific host, including its monitoring status and ACTIVE PROBLEMS.",

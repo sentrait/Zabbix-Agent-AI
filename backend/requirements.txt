@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+pydantic
+requests
+pyzabbix
+python-dotenv
+pandas
+numpy
+scikit-learn
+boto3
+openai
+google-generativeai

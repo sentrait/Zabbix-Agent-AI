@@ -1,0 +1,15 @@
+[Unit]
+Description=Zabbix AI Backend Service
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/zabbix_agent/backend
+Environment="PATH=/home/ubuntu/zabbix_agent/backend/venv/bin:/usr/bin:/bin"
+EnvironmentFile=/home/ubuntu/zabbix_agent/backend/.env
+ExecStart=/home/ubuntu/zabbix_agent/backend/venv/bin/python -m app.main
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

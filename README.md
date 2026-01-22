@@ -1,6 +1,6 @@
 # Zabbix AI Agent 🤖
 
-An advanced, "Active" AI Agent fully integrated into **Zabbix 7.0+**. This agent transforms Zabbix from a monitoring tool into an intelligent operations partner.
+An advanced, "Active" AI Agent fully integrated into **Zabbix 7.4+**. This agent transforms Zabbix from a monitoring tool into an intelligent operations partner.
 
 ![Zabbix AI Agent](https://pbs.twimg.com/media/Gb_j8uOWMAA_yv_.jpg) 
 *(Example Screenshot)*
@@ -34,7 +34,7 @@ A dedicated dashboard page providing a synthesized report of your infrastructure
 ## 📦 Installation
 
 ### Prerequisites
-- Zabbix Server 6.0 or 7.0+ (Tested on 7.0 LTS).
+- Zabbix Server 7.2 or 7.4+ (Tested on 7.4).
 - Python 3.10+.
 - Node.js & npm (for building the frontend).
 - A web server (Apache/Nginx) handling Zabbix.

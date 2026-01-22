@@ -111,6 +111,63 @@ class ZabbixService:
         
         return hosts[0]['hostid'] if hosts else None
 
+    def get_host_details(self, name_or_ip):
+        """Get host details including active problems"""
+        self.connect()
+        try:
+            # Try to find host by name, visible name or interface IP
+            hosts = self.api.host.get(
+                search={"name": name_or_ip, "host": name_or_ip, "ip": name_or_ip},
+                searchByAny=True,
+                output=["hostid", "name", "status", "maintenance_status"],
+                selectInterfaces=["ip"],
+                selectTags="extend"
+            )
+            
+            if not hosts:
+                # Fallback: strict filter tag matching often fails fuzzy search, try just list matching
+                # But for now, if not found, return message
+                return {"found": False, "message": f"Host '{name_or_ip}' not found in Zabbix."}
+            
+            host = hosts[0]
+            host_id = host['hostid']
+            
+            # Get Active Problems
+            problems = self.api.problem.get(
+                hostids=host_id,
+                output=["eventid", "name", "severity", "clock"],
+                recent="true", # Include recently resolved
+                sortfield="eventid",
+                sortorder="DESC"
+            )
+            
+            # Map severity to text
+            severity_map = {
+                "0": "Not classified", "1": "Information", "2": "Warning",
+                "3": "Average", "4": "High", "5": "Disaster"
+            }
+            
+            active_problems = []
+            for p in problems:
+                active_problems.append({
+                    "name": p['name'],
+                    "severity": severity_map.get(p['severity'], "Unknown"),
+                    "since": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(p['clock'])))
+                })
+                
+            return {
+                "found": True,
+                "name": host['name'],
+                "status": "Monitored" if host['status'] == '0' else "Not Monitored",
+                "maintenance": bool(int(host['maintenance_status'])),
+                "active_problems_count": len(problems),
+                "problems": active_problems
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting host details: {e}")
+            return {"error": str(e)}
+
     def get_problem_id_by_name(self, name):
         """Helper to find a recent problem event ID by name"""
         self.connect()

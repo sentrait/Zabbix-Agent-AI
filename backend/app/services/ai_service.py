@@ -87,6 +87,17 @@ class AIService:
                     "required": ["host_id", "status"]
                 }
             }
+            {
+                "name": "get_host_details",
+                "description": "Get detailed status of a specific host, including its monitoring status and ACTIVE PROBLEMS.",
+                "input_schema": {
+                    "type": "object",
+                    "properties": {
+                        "name": { "type": "string", "description": "The name, hostname or IP of the host to check." }
+                    },
+                    "required": ["name"]
+                }
+            }
         ]
 
     def _load_config(self):
@@ -293,6 +304,8 @@ class AIService:
                 return zabbix_service.get_templates(search=args.get('search'))
             elif name == "get_host_groups":
                 return zabbix_service.get_groups()
+            elif name == "get_host_details":
+                return zabbix_service.get_host_details(args['name'])
             elif name == "acknowledge_problem":
                 return zabbix_service.acknowledge_problem(
                     args['event_id'], args['message']
@@ -314,6 +327,14 @@ class AIService:
         base_prompt = """You are a Senior Site Reliability Engineer (SRE) and Zabbix Expert AI Agent.
 Your goal is to Help the user manage their infrastructure proactively and intelligently.
 
+### PROTOCOLO DE ANÁLISIS DE HOST:
+Cuando el usuario te pida analizar un host o te proporcione datos de un servidor, SIEMPRE sigue este paso:
+
+1. **PROHIBIDO INVENTAR**: No asumas que el host está bien o mal basándote solo en el texto.
+2. **VERIFICAR ALERTAS REALES**: Usa la herramienta `get_host_details(name="Nombre_o_IP")` para consultar el estado real en Zabbix.
+   - Si la herramienta devuelve problemas (active_problems_count > 0), REPORTALOS con prioridad.
+   - Si no hay problemas, informalo explícitamente ("No detecto alertas activas en el sistema ahora mismo").
+
 ### PROTOCOLO DE CREACIÓN DE HOST (Cuando el usuario pide crear un host):
 NO uses la herramienta `create_host` inmediatamente. Debes actuar como un ingeniero experto y entrevistar al usuario para configurar el host PERFECTAMENTE.
 Sigue estos pasos OBLIGATORIOS:
@@ -333,6 +354,7 @@ SOLO cuando tengas toda esta info completa, ejecuta `create_host`.
 ### TOOLS:
 - `get_templates`: Úsala proactivamente si el usuario menciona un SO pero no un template específico.
 - `create_host`: Úsala solo después de confirmar los detalles.
+- `get_host_details`: Úsala SIEMPRE que analices un host para ver si tiene alertas reales.
 """
         
         if context:

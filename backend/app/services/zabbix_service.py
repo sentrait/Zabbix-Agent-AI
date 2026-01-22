@@ -136,7 +136,7 @@ class ZabbixService:
             problems = self.api.problem.get(
                 hostids=host_id,
                 output=["eventid", "name", "severity", "clock"],
-                recent="true", # Include recently resolved
+                recent=True, # Include recently resolved
                 sortfield="eventid",
                 sortorder="DESC"
             )

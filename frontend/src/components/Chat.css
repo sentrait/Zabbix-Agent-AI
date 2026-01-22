@@ -221,7 +221,18 @@
     padding: 12px;
     border-radius: 8px;
     overflow-x: auto;
+    overflow-y: hidden;
     border: 1px solid rgba(255, 255, 255, 0.05);
+    max-width: 100%;
+}
+
+.markdown-content pre code {
+    background: transparent;
+    padding: 0;
+    white-space: pre;
+    word-wrap: normal;
+    overflow-wrap: normal;
+    display: block;
 }
 
 .markdown-content ul,
